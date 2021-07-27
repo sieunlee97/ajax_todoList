@@ -34,11 +34,17 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">	   
 	 	<property name="dataSource" ref="dataSource" />
 	 	<!-- 매퍼 xml로만든 쿼리파일의 경로를 인식하게 함.(아래 classpath경로 src/main/resources/쿼리xml) -->
-	 	<property name="mapperLocations" value="classpath:mappers/**/${MapperType}/*Mapper.xml"></property>
+	 	<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>
 	</bean>
 	
 	<!-- myBatis SqlSessionTemplate -->
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
 	  <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
 	 </bean>
+	 
+	<context:component-scan base-package="com.edu.vo" />
+	<context:component-scan base-package="com.edu.dao" />
+	<context:component-scan base-package="com.edu.service" />
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<aop:config></aop:config>
 </beans>
