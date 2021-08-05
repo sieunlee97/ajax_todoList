@@ -10,6 +10,7 @@
 				<input class="form-control" type="text" name="todo" id="todo" style="width:85%;height:50px; display:inline-block;">
 				<input type="hidden" name="no" id="no" value="${todoVO.no}">
 				<button class="btn btn-primary btn-lg" type="button" id="addBtn">+</button>
+				<!-- button class="btn btn-primary btn-lg" type="button" id="listBtn">List</button -->
 			</div>
 			<div style="text-align:center; width:100%;">
 			<!-- +버튼 눌렀을 때 ajax활용해 todo항목 나타날 위치 -->
@@ -20,9 +21,9 @@
 	              <div class="card-header" style="width:100%;">
 	                <h5 class="card-title">${todo_list.list}</h5>
 	                <div class="card-tools">
-	                  <a href="#" class="btn btn-tool">
+	                  <button type="button" id="updateBtn" class="btn btn-tool">
 	                    <i class="fas fa-pen"></i>
-	                  </a>
+	                  <button>
 	                </div>
 	              </div>
 	            </div>
@@ -46,21 +47,36 @@
 	<div class="card-header" style="width:100%;">
 	     <h5 class="card-title">{{list}}</h5>
 	     <div class="card-tools">
-	          <a href="#" class="btn btn-tool">
-	             <i class="fas fa-pen"></i>
-	          </a>
+	          <button class="btn btn-tool" type="button" id="updateBtn">수정</button>
 	     </div>
 	</div>
 </div>
 {{/each}}
 </script>
 
+<!-- 댓글 수정 버튼 액션 처리 -->
+<script>
+	$("#updateBtn").on("click", function() {
+		alert("hi");
+	});	
+</script>
+
 <!-- 화면을 재구현Representation하는 함수(아래) -->
 <script>
 var printList = function(data, target, templateObject) {
+	console.log(data);
 	var template = Handlebars.compile(templateObject.html()); //html태그로 변환
 	var html = template(data); //빅데이터를 리스트탬플릿에 바인딩(데이터결합,묶음) 역할. 변수 html에 저장되었음.
 	$(".template-div").remove(); // 화면에 보이는 댓글리스트만 지우기
+	//target.after(html); //target은 .time-label 클래스 영역을 가리킨다.
+	//target.append(html); //target은 #div_reply 아이디 영역을 가리킨다. append는 내부내용 기존 내용의 뒤에 추가
+	target.prepend(html); //prepend 내부 내용 추가시 기존 내용의 앞에 추가한다.
+};
+var printList2 = function(data, target, templateObject) {
+	console.log(data);
+	var template = Handlebars.compile(templateObject.html()); //html태그로 변환
+	var html = template(data); //빅데이터를 리스트탬플릿에 바인딩(데이터결합,묶음) 역할. 변수 html에 저장되었음.
+	//$(".template-div").remove(); // 화면에 보이는 todo항목 지우기
 	//target.after(html); //target은 .time-label 클래스 영역을 가리킨다.
 	//target.append(html); //target은 #div_reply 아이디 영역을 가리킨다. append는 내부내용 기존 내용의 뒤에 추가
 	target.prepend(html); //prepend 내부 내용 추가시 기존 내용의 앞에 추가한다.
@@ -71,9 +87,10 @@ var printList = function(data, target, templateObject) {
 <!-- 왜? btn_reply_list에 토글기능을 적용돼서, 토글기능과 Ajax기능을 분리하는 목적 -->
 <script>
 var todoList = function() {
+	var list = $("#todo").val();
 	$.ajax({
 		type:"post",
-		url:"/todo/list", //게시물번호에 대한 댓글 목록을 가져오는 URL
+		url:"/todo/list/", //게시물번호에 대한 댓글 목록을 가져오는 URL
 		dataType:"json", //받을 때 JSON데이터를 받는다.
 		success:function(result){ //result에는 댓글 목록을 Json데이터로 받는다.
 			//alert(result.list);
@@ -82,8 +99,7 @@ var todoList = function() {
 				$("#div_todoList").html('<div></div>');
 				alert("조회된 값이 없습니다.");
 			}else{				
-				//위에서 정의한 printReplyList(Json데이터, 출력위치타켓, 빵틀);  
-				
+				//위에서 정의한 printList(Json데이터, 출력위치타켓, 빵틀);  	
 				printList(result.todoList, $("#div_todoList"), $("#template"));//화면에 출력하는 구현함수를 호출하면 실행.
 			}		
 		},
@@ -96,7 +112,15 @@ var todoList = function() {
 
 <!-- 댓글 등록 버튼 액션 처리 -->
 <script>
-	$(document).ready(function(){	
+	$(document).ready(function(){
+		/* //디버그용 출력
+		todoList();
+		$("#listBtn").click(function() { // 등록 버튼 클릭했을 때 구현 내용
+			//todoList();
+			todoList(something, function (valid) {
+		         if (valid) { // do something }
+		      };
+		}); */
 		$("#addBtn").on("click", function() { // 등록 버튼 클릭했을 때 구현 내용
 			// Ajax 이용해서, 화면을 Representation (REST-API방식) 부분 화면을 재구현
 			// REST API 서버 단에 보낼 변수 값 정의(아래)
@@ -119,7 +143,18 @@ var todoList = function() {
 					list:list,
 				}),			
 				success:function(result){ //응답이 성공하면(상태값 200 OK), 위 경로에서 반환받은 result(JSON 텍스트 데이터) 이용해서 화면 재구현
-					todoList();
+					//todoList();
+					//var todoList = '[0:{no: 112, list: "테스트1", reg_date: "2021-08-05", update_date: "2021-08-05"}]';
+					// addBtn 버튼 클릭 시, 방금 입력한 데이터 출력
+					var aJsonArray = new Array();
+					var aJson = new Object();
+					aJson.no = result;
+					aJson.list = list;
+					aJsonArray.push(aJson);
+					var todo = JSON.stringify(aJsonArray);
+					todoList = JSON.parse(todo);
+					console.log(todoList);
+					printList2(todoList, $("#div_todoList"), $("#template"));//화면에 출력하는 구현함수를 호출하면 실행.
 					$("#todo").val(""); //등록후 입력 항목 비워주기
 				},
 				error:function(result){
@@ -129,3 +164,4 @@ var todoList = function() {
 		});
 	});
 </script>
+

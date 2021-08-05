@@ -21,15 +21,10 @@ public class ListServiceImpl implements ListService {
 	}
 
 	@Override
-	public TodoVO viewList(Integer no) throws Exception {
-		// todo list 한 항목보기 DAO 클래스 메소드 호출
-		return listDAO.viewList(no);
-	}
-
-	@Override
-	public void insertList(TodoVO todoVO) throws Exception {
+	public int insertList(TodoVO todoVO) throws Exception {
 		// todo list 추가하기
 		listDAO.insertList(todoVO);
+		return 0;
 		
 	}
 

@@ -18,13 +18,8 @@ import com.edu.vo.TodoVO;
  */
 @Controller
 public class HomeController {
-	@Inject
-	private ListService listService;
-
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) throws Exception{
-		List<TodoVO> todo_list = listService.selectAll();
-		model.addAttribute("todo_list", todo_list);
 		return "home";
 	}
 	

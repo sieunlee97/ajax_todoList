@@ -21,14 +21,9 @@ public class ListDAOImpl implements ListDAO {
 	}
 
 	@Override
-	public TodoVO viewList(Integer no) throws Exception {
-		return sqlSession.selectOne("todoMapper.viewList", no);
-	}
-
-	@Override
-	public void insertList(TodoVO todoVO) throws Exception {
+	public int insertList(TodoVO todoVO) throws Exception {
 		sqlSession.insert("todoMapper.insertList", todoVO);
-		
+		return todoVO.getNo();
 	}
 
 	@Override
