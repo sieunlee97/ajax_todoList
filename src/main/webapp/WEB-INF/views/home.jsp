@@ -1,26 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<style>
-.date {
-margin-top:10px;
-margin-bottom:10px;
-width:150px;
-}
-img {
-margin-left:5px;
-}
-</style>
+
 <%@ include file="./include/header.jsp" %>
 <div class="container">
 	<h1 style="text-align:center;">TODO LIST</h1>
 	<div>
 		<form action="todo_list.jsp" name="todo_form" method="post" class="form-group" style="width:80%; margin:0 auto;" >
 			<div style="text-align:center; margin-bottom:10px;">
-				<input class="date" name="regdate" value="<fmt:formatDate pattern='yyyy-MM-dd hh:mm:ss' value='${todoVO.regdate}'/>" >
 				<input class="form-control" type="text" name="todo" id="todo" style="width:85%;height:50px; display:inline-block;">
 				<input type="hidden" name="no" id="no" value="${todoVO.no}">
 				<button class="btn btn-primary btn-lg" type="button" id="addBtn">+</button>
@@ -52,27 +38,7 @@ margin-left:5px;
 <%@ include file="./include/footer.jsp" %>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
-<script>
-$(document).ready(function(){
-	$(".date").datepicker({
-		dateFormat: 'yy-mm-dd' //Input Display Format 변경
-       ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
-       ,showMonthAfterYear:true //년도 먼저 나오고, 뒤에 월 표시
-       ,changeYear: true //콤보박스에서 년 선택 가능
-       ,changeMonth: true //콤보박스에서 월 선택 가능                
-       ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시  
-       ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
-       ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
-       ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
-       ,yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
-       ,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] //달력의 월 부분 텍스트
-       ,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] //달력의 월 부분 Tooltip 텍스트
-       ,dayNamesMin: ['일','월','화','수','목','금','토'] //달력의 요일 부분 텍스트
-       ,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] //달력의 요일 부분 Tooltip 텍스트
-     
-	});
-});
-</script>
+
 <script id="template" type="text/x-handlebars-template">
 {{#each .}}
 <div class="template-div" data-rno="{{no}}">
@@ -110,13 +76,14 @@ var todoList = function() {
 		url:"/todo/list", //게시물번호에 대한 댓글 목록을 가져오는 URL
 		dataType:"json", //받을 때 JSON데이터를 받는다.
 		success:function(result){ //result에는 댓글 목록을 Json데이터로 받는다.
-			// alert("디버그"+result);
+			//alert(result.list);
 			if(typeof result=="undefined" || result == null || result == ""){
 				$("#div_todoList").empty(); //조회된 값 없을 때, 화면 내용 클리어.
 				$("#div_todoList").html('<div></div>');
 				alert("조회된 값이 없습니다.");
 			}else{				
 				//위에서 정의한 printReplyList(Json데이터, 출력위치타켓, 빵틀);  
+				
 				printList(result.todoList, $("#div_todoList"), $("#template"));//화면에 출력하는 구현함수를 호출하면 실행.
 			}		
 		},

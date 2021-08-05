@@ -3,16 +3,19 @@
 
 <mapper namespace="todoMapper">
 	<select id="selectAll" resultType="com.edu.vo.TodoVO">
-		SELECT * FROM todo
+		SELECT * FROM todo where date_format(reg_date, "%Y-%m-%d") = CURDATE()
 	</select>
 	<select id="viewList" resultType="com.edu.vo.TodoVO">
 		SELECT * FROM todo WHERE no = #{no}
 	</select>
 	<insert id="insertList">
-		INSERT INTO todo (list) VALUES (#{list})
+		INSERT INTO todo (list, reg_date) VALUES (#{list}, now())
 	</insert>
 	<update id="updateList">
-		UPDATE todo SET list=#{list} WHERE no=#{no}
+		UPDATE todo SET 
+		list=#{list}, 
+		update_date=now() 
+		WHERE no=#{no}
 	</update>
 	<delete id="deleteList">
 		DELETE FROM todo WHERE no=#{no}

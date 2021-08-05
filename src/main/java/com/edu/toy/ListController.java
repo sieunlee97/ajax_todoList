@@ -46,7 +46,7 @@ public class ListController {
 	}
 	//댓글입력 메소드(아래)
 	@RequestMapping(value="/todo/add", method=RequestMethod.POST)
-	public ResponseEntity<String> reply_write(@RequestBody TodoVO todoVO) {
+	public ResponseEntity<String> add_list(@RequestBody TodoVO todoVO) {
 		//@RequestBody 클래스는 ajax로 보내온 폼데이터를 ReplyVO 클래스에 바인딩시켜주는 어노테이션 클래스	
 		ResponseEntity<String> result = null;
 		//예외처리를 상위 메소드로 보내지 않는 이유는 RestAPI에서 예외 메세지를 개발자가 제공하기 위해서
